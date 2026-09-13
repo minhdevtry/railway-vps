@@ -1,0 +1,53 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "name": "Railway Ubuntu SSH VPS",
+  "description": "Ubuntu 24.04 VPS trên Railway với OpenSSH và TCP Proxy cố định. Đăng nhập trực tiếp bằng mật khẩu root. Hỗ trợ chạy API Server / AI Agent.",
+  "services": [
+    {
+      "name": "ubuntu-vps",
+      "source": {
+        "repo": "https://github.com/minhdevtry/railway-vps",
+        "branch": "main"
+      },
+      "build": {
+        "builder": "DOCKERFILE",
+        "dockerfilePath": "Dockerfile",
+        "buildContext": ".",
+        "watchPatterns": [
+          "Dockerfile",
+          "entrypoint.sh",
+          "welcome.sh"
+        ]
+      },
+      "deploy": {
+        "startCommand": "/entrypoint.sh",
+        "restartPolicyType": "ALWAYS",
+        "restartPolicyMaxRetries": 10,
+        "sleepApplicationStop": false
+      },
+      "variables": {
+        "ROOT_PASSWORD": {
+          "required": false,
+          "secret": true,
+          "defaultValue": "123456",
+          "description": "Mật khẩu đăng nhập root cho SSH. Mặc định là 123456 (khuyến nghị đổi mật khẩu mạnh)."
+        },
+        "SSH_PUB_KEY": {
+          "required": false,
+          "secret": true,
+          "description": "SSH Public Key cá nhân (tùy chọn, nếu muốn đăng nhập tự động không cần mật khẩu)"
+        }
+      }
+    }
+  ],
+  "proxy": {
+    "application": "ubuntu-vps",
+    "ports": [
+      {
+        "port": 22,
+        "protocol": "tcp",
+        "service": "ubuntu-vps"
+      }
+    ]
+  }
+}

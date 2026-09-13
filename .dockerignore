@@ -1,0 +1,9 @@
+.github/
+LICENCE
+README.md
+.DS_Store
+*.bat
+setup.ps1
+vps.txt
+.railway/
+.git/
