@@ -29,7 +29,7 @@ Deploy a disposable **Ubuntu 24.04 LTS** box on [Railway](https://railway.com) w
 
 | Variable | Default | Description |
 | :--- | :---: | :--- |
-| `ROOT_PASSWORD` | *(auto-generated)* | Root password for SSH. Empty = generate a strong 24-char password on first boot (see the deploy log) |
+| `ROOT_PASSWORD` | *(auto-generated)* | Root password for SSH. Empty = generate a strong 24-char password on first boot (see the deploy log). A **new** one is generated after every redeploy — check the log again |
 | `SSH_PUB_KEY` | *(empty)* | Your SSH public key — **recommended**. Loading a key disables password auth automatically |
 | `PASSWORD_AUTH` | `auto` | `yes` / `no` / `auto`. `auto` = disable password auth when an SSH key is loaded |
 | `START_COMMAND` | *(empty)* | Command to auto-run on boot, e.g. `uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}` |
@@ -73,7 +73,13 @@ Need more than one port? Just add more TCP Proxy entries — each container port
 ## ⚠️ Limitations
 
 - This is a **container, not a real VPS**: the filesystem is wiped on redeploy (plain restarts keep it). Persist important data on a Railway Volume or externally.
+- **Know your real quota:** `nproc` and `free` inside the container report the *host* machine's specs, not yours. Check your actual CPU/RAM limits with:
+  ```bash
+  cat /sys/fs/cgroup/cpu.max
+  cat /sys/fs/cgroup/memory.max
+  ```
 - Running 24/7 consumes Railway usage credits (billed by RAM×hours) — a cheap dedicated VPS is more economical for an always-on box.
+- Railway may restart the container for platform maintenance; the TCP Proxy endpoint stays the same, but any in-memory state is lost.
 
 ## 📄 License
 

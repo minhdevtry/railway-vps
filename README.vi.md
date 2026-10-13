@@ -29,7 +29,7 @@ Triển khai một máy **Ubuntu 24.04 LTS** trên [Railway](https://railway.com
 
 | Biến | Mặc định | Mô tả |
 | :--- | :---: | :--- |
-| `ROOT_PASSWORD` | *(tự sinh)* | Mật khẩu root cho SSH. Bỏ trống = tự sinh mật khẩu mạnh 24 ký tự ở lần boot đầu (xem deploy log) |
+| `ROOT_PASSWORD` | *(tự sinh)* | Mật khẩu root cho SSH. Bỏ trống = tự sinh mật khẩu mạnh 24 ký tự ở lần boot đầu (xem deploy log). Mỗi lần redeploy sẽ sinh mật khẩu **mới** — xem lại log |
 | `SSH_PUB_KEY` | *(trống)* | Public key SSH của bạn — **khuyên dùng**. Nạp key là password auth tự tắt |
 | `PASSWORD_AUTH` | `auto` | `yes` / `no` / `auto`. `auto` = tắt password auth khi đã có SSH key |
 | `START_COMMAND` | *(trống)* | Lệnh tự chạy khi boot, ví dụ `uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}` |
@@ -73,7 +73,13 @@ Cần nhiều hơn một port? Cứ thêm TCP Proxy entry — mỗi cổng trong
 ## ⚠️ Giới hạn
 
 - Đây là **container, không phải VPS thật**: filesystem bị xóa khi redeploy (restart thường thì giữ nguyên). Dữ liệu quan trọng hãy dùng Railway Volume hoặc lưu ra ngoài.
+- **Biết quota thật của bạn:** `nproc` và `free` trong container hiện thông số của máy *host*, không phải của bạn. Kiểm tra giới hạn CPU/RAM thật bằng:
+  ```bash
+  cat /sys/fs/cgroup/cpu.max
+  cat /sys/fs/cgroup/memory.max
+  ```
 - Chạy 24/7 tốn usage credit của Railway (tính theo RAM×giờ) — VPS thuê riêng rẻ hơn nhiều cho box chạy liên tục.
+- Railway có thể restart container khi bảo trì nền tảng; TCP Proxy endpoint giữ nguyên, nhưng mọi thứ trong RAM sẽ mất.
 
 ## 📄 Giấy phép
 
