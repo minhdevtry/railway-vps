@@ -1,1 +1,61 @@
-{"$schema":"https://railway.app/railway.schema.json","description":"Ubuntu 24.04 VPS trên Railway với OpenSSH và TCP Proxy cố định. Đăng nhập bằng SSH key (khuyên dùng) hoặc mật khẩu root. Hỗ trợ tự chạy API Server / AI Agent.","name":"Railway Ubuntu SSH VPS","proxy":{"application":"ubuntu-vps","ports":[{"port":22,"protocol":"tcp","service":"ubuntu-vps"}]},"services":[{"build":{"buildContext":".","builder":"DOCKERFILE","dockerfilePath":"Dockerfile","watchPatterns":["Dockerfile","entrypoint.sh","welcome.sh"]},"deploy":{"restartPolicyMaxRetries":10,"restartPolicyType":"ALWAYS","sleepApplicationStop":false,"startCommand":"/entrypoint.sh"},"name":"ubuntu-vps","source":{"branch":"main","repo":"https://github.com/minhdevtry/railway-vps"},"variables":{"PASSWORD_AUTH":{"defaultValue":"auto","description":"yes/no/auto — Cho phép đăng nhập SSH bằng mật khẩu. auto (mặc định): tắt password khi đã có SSH key.","required":false},"ROOT_PASSWORD":{"description":"Mật khẩu root cho SSH. Bỏ trống = tự tạo mật khẩu ngẫu nhiên mạnh 24 ký tự (xem deploy log lần đầu). Khuyên đặt mật khẩu riêng.","required":false,"secret":true},"SSH_PUB_KEY":{"description":"SSH Public Key (KHUYÊN DÙNG). Khi đã nạp key, password auth sẽ TỰ ĐỘNG TẮT để chống brute-force.","required":false,"secret":true},"START_COMMAND":{"description":"Lệnh tự chạy khi container khởi động. VD: uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}. Log tại /var/log/railway-vps/app.log.","required":false}}}]}
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "description": "Ubuntu 24.04 VPS on Railway with OpenSSH and a stable TCP Proxy. Log in with an SSH key (recommended) or the root password. Auto-start API servers / AI agents.",
+  "name": "Railway Ubuntu SSH VPS",
+  "proxy": {
+    "application": "ubuntu-vps",
+    "ports": [
+      {
+        "port": 22,
+        "protocol": "tcp",
+        "service": "ubuntu-vps"
+      }
+    ]
+  },
+  "services": [
+    {
+      "build": {
+        "buildContext": ".",
+        "builder": "DOCKERFILE",
+        "dockerfilePath": "Dockerfile",
+        "watchPatterns": [
+          "Dockerfile",
+          "entrypoint.sh",
+          "welcome.sh"
+        ]
+      },
+      "deploy": {
+        "restartPolicyMaxRetries": 10,
+        "restartPolicyType": "ALWAYS",
+        "sleepApplicationStop": false,
+        "startCommand": "/entrypoint.sh"
+      },
+      "name": "ubuntu-vps",
+      "source": {
+        "branch": "main",
+        "repo": "https://github.com/minhdevtry/railway-vps"
+      },
+      "variables": {
+        "PASSWORD_AUTH": {
+          "defaultValue": "auto",
+          "description": "yes/no/auto — Allow SSH password login. auto (default): disable password auth when an SSH key is present.",
+          "required": false
+        },
+        "ROOT_PASSWORD": {
+          "description": "Root password for SSH. Leave empty to auto-generate a strong 24-character password (see the first deploy log). Setting your own is recommended.",
+          "required": false,
+          "secret": true
+        },
+        "SSH_PUB_KEY": {
+          "description": "SSH public key (RECOMMENDED). When a key is loaded, password authentication is AUTOMATICALLY DISABLED to stop brute-force attacks.",
+          "required": false,
+          "secret": true
+        },
+        "START_COMMAND": {
+          "description": "Command to run on container start. E.g.: uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}. Logs at /var/log/railway-vps/app.log.",
+          "required": false
+        }
+      }
+    }
+  ]
+}
